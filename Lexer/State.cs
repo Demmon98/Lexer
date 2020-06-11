@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lexer
+{
+    public enum State
+    {
+        START,
+        SINGLE_SLASH,
+        SINGLE_LINE_COMMENT,
+        MULTI_LINE_COMMENT,
+        MULTI_LINE_COMMENT_AND_STAR,
+        SINGLE_PLUS,
+        SINGLE_MINUS,
+        OPERATOR_MAYBE_BEFORE_EQUAL,
+        SINGLE_LESS_THAN,
+        SINGLE_GREATER_THAN,
+        DOUBLE_GREATER_THAN,
+        SINGLE_COLON,
+        SINGLE_AMPERSAND,
+        SINGLE_VERTICAL_BAR,
+        SINGLE_DOT,
+        DOUBLE_DOT,
+        IDENTIFIER,
+        DECIMAL_NUMBER,
+        OCTAL_NUMBER,
+        HEX_NUMBER,
+        FLOATING_POINT_NUMBER,
+        SINGLE_ZERO,
+        BINARY_NUMBER,
+        SYMBOLIC_CONSTANT,
+        BACKSLASH_IN_SYMBOLIC_CONSTANT,
+        ONE_OCTAL_DIGIT_AFTER_BACKSLASH_IN_SYMBOLIC_CONSTANT,
+        TWO_OCTAL_DIGIT_AFTER_BACKSLASH_IN_SYMBOLIC_CONSTANT,
+        END_OF_SYMBOLIC_CONSTANT,
+        ERROR_READ_SYMBOLIC_CONSTANT,
+        BACKSLASH_INSIDE_ERROR_READ_SYMBOLIC_CONSTANT,
+        LITERAL_CONSTANT,
+        BACKSLASH_IN_LITERAL_CONSTANT,
+        ERROR_READ_LITERAL_CONSTANT
+    }
+}
