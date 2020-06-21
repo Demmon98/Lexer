@@ -11,7 +11,7 @@ namespace Lexer
         static void Main(string[] args)
         {
             //new Lexer("file.txt");
-            new Lexer($"Finder.cs");
+            new Lexer($"file.txt");
 
             Console.ReadKey();
         }

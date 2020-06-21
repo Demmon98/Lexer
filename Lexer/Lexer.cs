@@ -401,7 +401,8 @@ namespace Lexer
             if (c == '<')
             {
                 //<<
-                AddcharacterToBuffer(c, State.OPERATOR_MAYBE_BEFORE_EQUAL);
+                AddcharacterToBuffer(c, State.START);
+                AddToken(TokenType.OPERATOR);
             }
             else if (c == '=')
             {
@@ -423,7 +424,8 @@ namespace Lexer
             if (c == '>')
             {
                 //>>
-                AddcharacterToBuffer(c, State.OPERATOR_MAYBE_BEFORE_EQUAL);
+                AddcharacterToBuffer(c, State.START);
+                AddToken(TokenType.OPERATOR);
             }
             else if (c == '=')
             {
