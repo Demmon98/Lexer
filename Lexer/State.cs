@@ -23,6 +23,8 @@ namespace Lexer
         SINGLE_VERTICAL_BAR,
         SINGLE_DOT,
         IDENTIFIER,
+        SINGLE_DOLLAR,
+        SINGLE_AT,
         DECIMAL_NUMBER,
         OCTAL_NUMBER,
         HEX_NUMBER,

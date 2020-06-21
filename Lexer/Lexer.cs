@@ -90,6 +90,12 @@ namespace Lexer
                     case State.IDENTIFIER:
                         IdentifierState(c);
                         break;
+                    case State.SINGLE_DOLLAR:
+                        SingleDollarState(c);
+                        break;
+                    case State.SINGLE_AT:
+                        SingleAtState(c);
+                        break;
                     case State.DECIMAL_NUMBER:
                         DecimalNumberState(c);
                         break;
@@ -197,7 +203,8 @@ namespace Lexer
                 AddcharacterToBuffer(c, State.SINGLE_MINUS);
             }
             else if (c == '=' || c == '^' || c == '%' || c == '!' || c == '*')
-            {//^, %, !, =, *
+            {
+                //^, %, !, =, *
                 AddcharacterToBuffer(c, State.OPERATOR_MAYBE_BEFORE_EQUAL);
             }
             else if (c == '<')
@@ -225,18 +232,27 @@ namespace Lexer
             {
                 AddcharacterToBuffer(c, State.SINGLE_VERTICAL_BAR);
             }
-            else if (c == '(' || c == ')' || c == '{' || c == '}' || c == '[' || c == ']' || c == ';' || c == ',' || c == '@')
-            { //( ) { } [ ] ; , @
+            else if (c == '(' || c == ')' || c == '{' || c == '}' || c == '[' || c == ']' || c == ';' || c == ',')
+            { 
+                //( ) { } [ ] ; ,
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.PUNCTUATION);
+            }
+            else if (c == '@')
+            {
+                AddcharacterToBuffer(c, State.SINGLE_AT);
             }
             else if (c == '.')
             {
                 AddcharacterToBuffer(c, State.SINGLE_DOT);
             }
-            else if (char.IsLetter(c) || c == '_' || c == '$')
+            else if (char.IsLetter(c) || c == '_')
             {
                 AddcharacterToBuffer(c, State.IDENTIFIER);
+            }
+            else if (c == '$')
+            {
+                AddcharacterToBuffer(c, State.SINGLE_DOLLAR);
             }
             else if (c == '0')
             {
@@ -333,7 +349,8 @@ namespace Lexer
         private void SinglePlusState(char c)
         {
             if (c == '+' || c == '=')
-            {// ++ +=
+            {
+                // ++ +=
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
@@ -348,12 +365,14 @@ namespace Lexer
         private void SingleMinusState(char c)
         {
             if (c == '-' || c == '=')
-            {//-- -=
+            {
+                //-- -=
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
             else
-            {//-
+            {
+                //-
                 AddToken(TokenType.OPERATOR);
                 currentIndex--;
                 state = State.START;
@@ -363,12 +382,14 @@ namespace Lexer
         private void OperatorMaybeBeforeEqualState(char c)
         {
             if (c == '=' || c == '>')
-            {//==  =>
+            {
+                //==  =>
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
             else
-            {//=
+            {
+                //=
                 AddToken(TokenType.OPERATOR);
                 currentIndex--;
                 state = State.START;
@@ -378,16 +399,19 @@ namespace Lexer
         private void SingleLessThanState(char c)
         {
             if (c == '<')
-            {//<<
+            {
+                //<<
                 AddcharacterToBuffer(c, State.OPERATOR_MAYBE_BEFORE_EQUAL);
             }
             else if (c == '=')
-            {//<=
+            {
+                //<=
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
             else
-            {//<
+            {
+                //<
                 AddToken(TokenType.OPERATOR);
                 currentIndex--;
                 state = State.START;
@@ -397,16 +421,19 @@ namespace Lexer
         private void SingleGreaterThanState(char c)
         {
             if (c == '>')
-            {//>>
+            {
+                //>>
                 AddcharacterToBuffer(c, State.OPERATOR_MAYBE_BEFORE_EQUAL);
             }
             else if (c == '=')
-            {//>=
+            {
+                //>=
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
             else
-            {//>
+            {
+                //>
                 AddToken(TokenType.OPERATOR);
                 currentIndex--;
                 state = State.START;
@@ -416,7 +443,8 @@ namespace Lexer
         private void SingleColonState(char c)
         {
             if (c == ':')
-            {// ::
+            {
+                // ::
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.PUNCTUATION);
             }
@@ -431,7 +459,8 @@ namespace Lexer
         private void SingleAmpersandState(char c)
         {
             if (c == '&' || c == '=')
-            {// && &=
+            {
+                // && &=
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
@@ -446,7 +475,8 @@ namespace Lexer
         private void SingleVerticalBarState(char c)
         {
             if (c == '|' || c == '=')
-            {// || |=
+            {
+                // || |=
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
@@ -461,7 +491,8 @@ namespace Lexer
         private void SingleDotState(char c)
         {
             if (c == '.')
-            {//..
+            {
+                //..
                 AddToken(TokenType.ERROR);
                 currentIndex--;
                 state = State.START;
@@ -471,7 +502,8 @@ namespace Lexer
                 AddcharacterToBuffer(c, State.FLOATING_POINT_NUMBER);
             }
             else
-            {//.
+            {
+                //.
                 AddToken(TokenType.PUNCTUATION);
                 currentIndex--;
                 state = State.START;
@@ -507,6 +539,49 @@ namespace Lexer
                 AddToken(TokenType.IDENTIFIER);
                 currentIndex--;
                 state = State.START;
+            }
+        }
+
+        private void SingleDollarState(char c)
+        {
+            //$"
+            if (c == '"')
+            {
+                AddToken(TokenType.OPERATOR);
+                currentIndex--;
+                state = State.START;
+            }
+            //$@
+            else if (c == '@')
+            {
+                AddToken(TokenType.OPERATOR, c);
+                state = State.SINGLE_DOLLAR;
+            }
+            else
+            {
+                AddcharacterToBuffer(c, State.IDENTIFIER);
+            }
+        }
+
+        private void SingleAtState(char c)
+        {
+            //@"
+            if (c == '"')
+            {
+                AddToken(TokenType.OPERATOR);
+                currentIndex--;
+                state = State.START;
+            }
+            //@$
+            else if (c == '$')
+            {
+                AddToken(TokenType.OPERATOR, c);
+                state = State.SINGLE_AT;
+            }
+            else
+            {
+                AddcharacterToBuffer(c, State.START);
+                AddToken(TokenType.PUNCTUATION);
             }
         }
 
