@@ -32,7 +32,7 @@ namespace Lexer
 
         public static readonly HashSet<char> escapeSequences = new HashSet<char>() { 'b', 't', 'n', '\\', '\'', '"', 'r', 'f' };
 
-        public static bool IsKeyword(String word)
+        public static bool IsKeyword(string word)
         {
             return keywords.Contains(word);
         }

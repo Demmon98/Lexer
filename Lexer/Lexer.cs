@@ -40,8 +40,7 @@ namespace Lexer
 
         private void Analyser()
         {
-            int numberOfcharacters = wholeFile.Length;
-            for (currentIndex = 0; currentIndex < numberOfcharacters; currentIndex++)
+            for (currentIndex = 0; currentIndex < wholeFile.Length; currentIndex++)
             {
                 char c = wholeFile[currentIndex];
                 switch (state)
@@ -76,9 +75,6 @@ namespace Lexer
                     case State.SINGLE_GREATER_THAN:
                         SingleGreaterThanState(c);
                         break;
-                    case State.DOUBLE_GREATER_THAN:
-                        DoubleGreaterThanState(c);
-                        break;
                     case State.SINGLE_COLON:
                         SingleColonState(c);
                         break;
@@ -90,9 +86,6 @@ namespace Lexer
                         break;
                     case State.SINGLE_DOT:
                         SingleDotState(c);
-                        break;
-                    case State.DOUBLE_DOT:
-                        DoubleDotState(c);
                         break;
                     case State.IDENTIFIER:
                         IdentifierState(c);
@@ -354,8 +347,8 @@ namespace Lexer
 
         private void SingleMinusState(char c)
         {
-            if (c == '-' || c == '=' || c == '>')
-            {//-- -= ->
+            if (c == '-' || c == '=')
+            {//-- -=
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
@@ -369,8 +362,8 @@ namespace Lexer
 
         private void OperatorMaybeBeforeEqualState(char c)
         {
-            if (c == '=')
-            {//==
+            if (c == '=' || c == '>')
+            {//==  =>
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.OPERATOR);
             }
@@ -405,7 +398,7 @@ namespace Lexer
         {
             if (c == '>')
             {//>>
-                AddcharacterToBuffer(c, State.DOUBLE_GREATER_THAN);
+                AddcharacterToBuffer(c, State.OPERATOR_MAYBE_BEFORE_EQUAL);
             }
             else if (c == '=')
             {//>=
@@ -414,25 +407,6 @@ namespace Lexer
             }
             else
             {//>
-                AddToken(TokenType.OPERATOR);
-                currentIndex--;
-                state = State.START;
-            }
-        }
-
-        private void DoubleGreaterThanState(char c)
-        {
-            if (c == '>')
-            {//>>>
-                AddcharacterToBuffer(c, State.OPERATOR_MAYBE_BEFORE_EQUAL);
-            }
-            else if (c == '=')
-            {//>>=
-                AddcharacterToBuffer(c, State.START);
-                AddToken(TokenType.OPERATOR);
-            }
-            else
-            {//>>
                 AddToken(TokenType.OPERATOR);
                 currentIndex--;
                 state = State.START;
@@ -488,7 +462,9 @@ namespace Lexer
         {
             if (c == '.')
             {//..
-                AddcharacterToBuffer(c, State.DOUBLE_DOT);
+                AddToken(TokenType.ERROR);
+                currentIndex--;
+                state = State.START;
             }
             else if (char.IsDigit(c))
             {
@@ -497,21 +473,6 @@ namespace Lexer
             else
             {//.
                 AddToken(TokenType.PUNCTUATION);
-                currentIndex--;
-                state = State.START;
-            }
-        }
-
-        private void DoubleDotState(char c)
-        {
-            if (c == '.')
-            {//...
-                AddcharacterToBuffer(c, State.START);
-                AddToken(TokenType.PUNCTUATION);
-            }
-            else
-            {//..
-                AddToken(TokenType.ERROR);
                 currentIndex--;
                 state = State.START;
             }
@@ -637,7 +598,7 @@ namespace Lexer
             {
                 AddcharacterToBuffer(c);
             }
-            else if (c == 'd' || c == 'D' || c == 'f' || c == 'F')
+            else if (c == 'd' || c == 'D' || c == 'f' || c == 'F' || c == 'm' || c == 'M')
             {
                 AddcharacterToBuffer(c, State.START);
                 AddToken(TokenType.NUMERIC);
